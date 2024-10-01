@@ -58,4 +58,32 @@ for p in patients:
 
     # Save the mask to a file
     #sitk.WriteImage(pmask, "mask.nii")
+    
+    # Check if mask and MRI have the same physical space (origin, spacing, and size) and, if not, skip to the next patient
+    if pMRI.GetOrigin() != pmask.GetOrigin() or pMRI.GetSpacing() != pmask.GetSpacing() or pMRI.GetSize() != pmask.GetSize():
+        
+        print(f"Skipping MRI{p} and mask{p}: Mismatch in origin, spacing, or size.")
+
+        # We check the origin, spacing and size of the two images to find out what the problem is
+        
+        # Print the origin of the two images (physical coordinates of the first voxel)
+        print(f"Origin MRI: {pMRI.GetOrigin()}")
+        print(f"Origin Mask: {pmask.GetOrigin()}")
+        
+        # Print the spacing of the two images
+        print(f"Spacing MRI: {pMRI.GetSpacing()}")
+        print(f"Spacing Mask: {pmask.GetSpacing()}")
+        
+        # Print the size of the two images
+        print(f"Size MRI: {pMRI.GetSize()}")
+        print(f"Size Mask: {pmask.GetSize()}")
+        
+        continue  # Skip to the next iteration
+
+
+    # Apply the mask to the MRI image
+    maskedMRI = sitk.Mask(pMRI, pmask)
+
+    # Save the masked image to a file
+    #sitk.WriteImage(maskedMRI, "masked_mri_image.nii")
 
